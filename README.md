@@ -1,1 +1,2 @@
-https://github.com/Link789/Selenium-full-manual.git
+# Selenium-full-manual
+Обучение Selenium
