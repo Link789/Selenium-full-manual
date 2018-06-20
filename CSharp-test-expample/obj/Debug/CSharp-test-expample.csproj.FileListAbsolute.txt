@@ -1,0 +1,13 @@
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\CSharp-test-expample.dll
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\CSharp-test-expample.pdb
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\nunit.framework.dll
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\WebDriver.dll
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\WebDriver.Support.dll
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\nunit.framework.pdb
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\nunit.framework.xml
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\WebDriver.xml
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\WebDriver.Support.xml
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\obj\Debug\CSharp-test-expample.dll
+C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\obj\Debug\CSharp-test-expample.pdb
