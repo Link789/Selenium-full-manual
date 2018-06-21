@@ -9,24 +9,22 @@ namespace CSharp_test_expample
 {
     [TestClass]
     public class UnitTest1
-    {
-        [TestMethod]
+    { 
+    [TestMethod]
         public void TestMethod1()
         {
+            //задание 3
             IWebDriver driver = new FirefoxDriver();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(11));
-            driver.Navigate().GoToUrl("http://software-testing.ru");
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin");
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id("sidebar")));
             driver.Quit();
             driver = null;
-           
         }
-        public void TestMethod2()
-        {
 
-        }
-        public void TestMethod3()
-        {
-
-        }
+        
     }
 }
