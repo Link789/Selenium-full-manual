@@ -16,6 +16,11 @@ namespace CSharp_test_expample
             //задание 3
             IWebDriver driver = new FirefoxDriver();
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            FirefoxOptions options = new FirefoxOptions();
+            options.UseLegacyImplementation = true;
+            driver = new FirefoxDriver(options);
+
             driver.Navigate().GoToUrl("http://localhost/litecart/admin");
             driver.FindElement(By.Name("username")).SendKeys("admin");
             driver.FindElement(By.Name("password")).SendKeys("admin");
