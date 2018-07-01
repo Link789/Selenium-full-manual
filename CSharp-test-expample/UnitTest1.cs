@@ -77,6 +77,26 @@ namespace CSharp_test_expample
             }
             CloseDriver(driver);
         }
+        [TestMethod]
+        public void TestMethod3()
+        {
+            driver = new FirefoxDriver();
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            driver.Navigate().GoToUrl("http://localhost/litecart");
+            ReadOnlyCollection<IWebElement> images = driver.FindElements(By.CssSelector("div.image-wrapper"));
+            foreach(IWebElement sticker in images)
+            {
+                Assert.IsTrue(AreElementPresent(By.CssSelector("div"),sticker));
+            }
+ 
+            CloseDriver(driver);
+        }
+
+        public bool AreElementPresent(By locator, IWebElement element)
+        {
+            return element.FindElements(locator).Count == 1;
+        }
 
         public bool AreElementPresent(By locator)
         {
