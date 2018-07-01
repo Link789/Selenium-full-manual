@@ -11,4 +11,3 @@ C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\
 C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
 C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\obj\Debug\CSharp-test-expample.dll
 C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\obj\Debug\CSharp-test-expample.pdb
-C:\Users\Link789\Documents\GitHub\Selenium-full-manual\CSharp-test-expample\obj\Debug\CSharp-test-expample.csprojResolveAssemblyReference.cache
