@@ -103,6 +103,8 @@ namespace CSharp_test_expample
             driver.FindElement(By.Name("username")).SendKeys("admin");
             driver.FindElement(By.Name("password")).SendKeys("admin");
             driver.FindElement(By.Name("login")).Click();
+
+            //1)
             driver.Navigate().GoToUrl("http://localhost/litecart/admin/?app=countries&doc=countries");
 
             ReadOnlyCollection<IWebElement> rows = driver.FindElements(By.CssSelector("form[name=countries_form] tr.row"));              
@@ -112,7 +114,7 @@ namespace CSharp_test_expample
                 row.Add(tr.FindElement(By.XPath("./td[5]/a")).GetAttribute("textContent") + "\t" +
                 tr.FindElement(By.XPath("./td[5]/a")).GetAttribute("href") + "\t" + tr.FindElement(By.XPath("./td[6]")).GetAttribute("textContent"));                                       
             }
-            Assert.IsTrue(InAlphabetOrder_split(row));// the end of the first part
+            Assert.IsTrue(InAlphabetOrder_split(row));
 
             foreach (string line in row)
             {
@@ -129,10 +131,32 @@ namespace CSharp_test_expample
                             zoneRow.Add(tr.FindElement(By.XPath("./td[3]")).GetAttribute("textContent"));
                         }
                     }
-                    Assert.IsTrue(InAlphabetOrder(zoneRow));// end of part two
+                    Assert.IsTrue(InAlphabetOrder(zoneRow));
                 }
             }
-            CloseDriver(driver);
+            // the end of the first part
+
+            //2)
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones");
+            ReadOnlyCollection<IWebElement> tableRow = driver.FindElements(By.CssSelector("form[name=geo_zones_form] tr.row"));
+            List<string> tRow = new List<string>();
+            foreach (IWebElement tr in tableRow)
+            {
+                tRow.Add(tr.FindElement(By.XPath("./td[3]/a")).GetAttribute("href"));
+            }
+            foreach (string line in tRow)
+            {
+                driver.Navigate().GoToUrl(line);
+                ReadOnlyCollection<IWebElement> selects = driver.FindElements(By.CssSelector("table#table-zones select[name*=zone_code]>option[selected=selected]"));
+                List<string> select_text = new List<string>();
+                foreach (IWebElement select in selects)
+                {
+                    select_text.Add(select.GetAttribute("text"));
+                }
+                Assert.IsTrue(InAlphabetOrder(select_text));
+            }
+            CloseDriver(driver); 
+            // end of part two
         }
         public bool InAlphabetOrder(List<string> array)
         {
