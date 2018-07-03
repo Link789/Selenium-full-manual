@@ -6,6 +6,7 @@ using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace CSharp_test_expample
 {
@@ -92,7 +93,90 @@ namespace CSharp_test_expample
  
             CloseDriver(driver);
         }
+        [TestMethod]
+        public void TestMethod4()
+        {
+            driver = new FirefoxDriver();
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin");
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin/?app=countries&doc=countries");
+
+            ReadOnlyCollection<IWebElement> rows = driver.FindElements(By.CssSelector("form[name=countries_form] tr.row"));              
+            List<string> row = new List<string>();
+            foreach (IWebElement tr in rows)
+            {
+                row.Add(tr.FindElement(By.XPath("./td[5]/a")).GetAttribute("textContent") + "\t" +
+                tr.FindElement(By.XPath("./td[5]/a")).GetAttribute("href") + "\t" + tr.FindElement(By.XPath("./td[6]")).GetAttribute("textContent"));                                       
+            }
+            Assert.IsTrue(InAlphabetOrder_split(row));// the end of the first part
+
+            foreach (string line in row)
+            {
+                string[] attribute = line.Split('\t');
+                if (Convert.ToInt32(attribute[2]) > 0)
+                {
+                    driver.Navigate().GoToUrl(attribute[1]);
+                    ReadOnlyCollection<IWebElement> zoneRows = driver.FindElements(By.CssSelector("table#table-zones tr"));
+                    List<string> zoneRow = new List<string>();
+                    foreach (IWebElement tr in zoneRows)
+                    {                      
+                        if (tr.FindElements(By.XPath("./td[3]")).Count > 0 && tr.FindElement(By.XPath("./td[3]")).GetAttribute("textContent") != "")
+                        {
+                            zoneRow.Add(tr.FindElement(By.XPath("./td[3]")).GetAttribute("textContent"));
+                        }
+                    }
+                    Assert.IsTrue(InAlphabetOrder(zoneRow));// end of part two
+                }
+            }
+            CloseDriver(driver);
+        }
+        public bool InAlphabetOrder(List<string> array)
+        {
+            List<string> name_sort = new List<string>();
+            foreach (string row in array)
+            {              
+                name_sort.Add(row);
+            }
+            name_sort.Sort();
+            bool result = true;
+            for (int i = 0; i < name_sort.Count; i++)
+            {
+                Console.WriteLine(array[i] + "==" + name_sort[i]);
+                if (array[i] != name_sort[i])
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+        public bool InAlphabetOrder_split(List <string> array)
+        {            
+            List<string> name =new List<string>();
+            List<string> name_sort = new List<string>();
+            foreach (string row in array)
+            {
+                string[] name_ = row.Split('\t');
+                name.Add(name_[0]);
+                name_sort.Add(name_[0]);
+            }
+            name_sort.Sort();
+            bool result = true;
+            for (int i = 0; i < name_sort.Count; i++)
+            {
+                Console.WriteLine(name[i] + "==" + name_sort[i]);
+                if (name[i] != name_sort[i])
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
         public bool AreElementPresent(By locator, IWebElement element)
         {
             return element.FindElements(locator).Count == 1;
