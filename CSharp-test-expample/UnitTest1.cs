@@ -158,6 +158,100 @@ namespace CSharp_test_expample
             CloseDriver(driver); 
             // end of part two
         }
+
+        [TestMethod]
+        public void TestMethod5()
+        {
+            driver = new FirefoxDriver();
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            string[] campaignsName = new string[2];
+            string[] regularPrice = new string[5];
+            string[] campaignPrice = new string[5];
+
+            driver.Navigate().GoToUrl("http://localhost/litecart");
+
+            IWebElement objName = driver.FindElement(By.CssSelector("#box-campaigns .name"));
+            IWebElement objRegularP = driver.FindElement(By.CssSelector("#box-campaigns .regular-price"));
+            IWebElement objCampaignP = driver.FindElement(By.CssSelector("#box-campaigns .campaign-price"));
+
+            campaignsName[0]= objName.GetAttribute("textContent");
+            regularPrice[0] = objRegularP.GetAttribute("textContent");
+            campaignPrice[0] = objCampaignP.GetAttribute("textContent");
+
+            regularPrice[2] = objRegularP.GetCssValue("color");
+            campaignPrice[2] = objCampaignP.GetCssValue("color");
+
+            regularPrice[3] = objRegularP.GetCssValue("text-decoration");
+            campaignPrice[3] = objCampaignP.GetCssValue("font-weight");
+
+            regularPrice[4] = objRegularP.GetCssValue("font-size");
+            campaignPrice[4] = objCampaignP.GetCssValue("font-size");
+
+            Assert.IsTrue(GreyColorline_through(regularPrice[2], regularPrice[3]));// обычная цена зачёркнутая и серая
+            Assert.IsTrue(RedColorBold(campaignPrice[2], campaignPrice[3]));// акционная жирная и красная
+            Assert.IsTrue(FontSize(regularPrice[4], campaignPrice[4]));// акционная цена крупнее, чем обычная
+
+            driver.FindElement(By.CssSelector("#box-campaigns .image-wrapper")).Click();
+
+            objName = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#box-product .title")));
+            objRegularP = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#box-product .regular-price")));
+            objCampaignP = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#box-product .campaign-price")));
+
+            campaignsName[1] = objName.GetAttribute("textContent");
+            regularPrice[1] = objRegularP.GetAttribute("textContent");
+            campaignPrice[1] = objCampaignP.GetAttribute("textContent");
+
+            regularPrice[2] = objRegularP.GetCssValue("color");
+            campaignPrice[2] = objCampaignP.GetCssValue("color");
+
+            regularPrice[3] = objRegularP.GetCssValue("text-decoration");
+            campaignPrice[3] = objCampaignP.GetCssValue("font-weight");
+
+            regularPrice[4] = objRegularP.GetCssValue("font-size");
+            campaignPrice[4] = objCampaignP.GetCssValue("font-size");
+
+            Assert.IsTrue(GreyColorline_through(regularPrice[2], regularPrice[3]));// обычная цена зачёркнутая и серая 
+            Assert.IsTrue(RedColorBold(campaignPrice[2], campaignPrice[3]));// акционная жирная и красная
+            Assert.IsTrue(FontSize(regularPrice[4], campaignPrice[4]));// акционная цена крупнее, чем обычная
+
+            Assert.IsTrue(campaignsName[1] == campaignsName[0]);// на странице товара совпадает текст названия товара
+            Assert.IsTrue(regularPrice[1] == regularPrice[0]);// на странице товара совпадают цены (обычная)
+            Assert.IsTrue(campaignPrice[1] == campaignPrice[0]);// на странице товара совпадают цены (акционная)
+     
+            CloseDriver(driver);      
+        }
+        public bool FontSize(string regular, string campaign)
+        {
+            regular = regular.Replace("px", "");
+            regular = regular.Replace(".", ",");
+            campaign = campaign.Replace("px", "");
+            if (Convert.ToDecimal(regular) < Convert.ToDecimal(campaign))
+                return true;
+            else
+                return false;
+        }
+        public bool RedColorBold(string rgb, string outline)
+        {
+            rgb = rgb.Replace("rgb(", "");
+            rgb = rgb.Replace(")", "");
+            rgb = rgb.Replace(" ", "");
+            string[] digital = rgb.Split(',');
+            if (Convert.ToInt32(digital[2]) == 0 && Convert.ToInt32(digital[1]) == 0 && Convert.ToInt32(outline) >600)
+                return true;
+            else
+                return false;
+        }
+        public bool GreyColorline_through(string rgb,string outline)
+        {
+            rgb = rgb.Replace("rgb(", "");
+            rgb = rgb.Replace(")", "");
+            rgb = rgb.Replace(" ", "");
+            string[] digital = rgb.Split(',');         
+            if (digital[0] == digital[1] && digital[0] == digital[2] && digital[1] == digital[2] && outline == "line-through")
+                return true;
+            else
+                return false;
+        }
         public bool InAlphabetOrder(List<string> array)
         {
             List<string> name_sort = new List<string>();
