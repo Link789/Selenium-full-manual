@@ -7,6 +7,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Linq;
+using System.Collections;
 
 namespace CSharp_test_expample
 {
@@ -158,7 +160,6 @@ namespace CSharp_test_expample
             CloseDriver(driver); 
             // end of part two
         }
-
         [TestMethod]
         public void TestMethod5()
         {
@@ -219,6 +220,57 @@ namespace CSharp_test_expample
             Assert.IsTrue(campaignPrice[1] == campaignPrice[0]);// на странице товара совпадают цены (акционная)
      
             CloseDriver(driver);      
+        }
+        [TestMethod]
+        public void TestMethod6()
+        {
+            string US = "United States";
+            driver = new FirefoxDriver();
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+     
+            driver.Navigate().GoToUrl("http://localhost/litecart");
+            IJavaScriptExecutor js = driver as IJavaScriptExecutor;
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='box-account-login']//a[contains(.,'New customers')]"))).Click();
+            driver.FindElement(By.Name("firstname")).SendKeys("Max");
+            driver.FindElement(By.Name("lastname")).SendKeys("Limberman");
+            driver.FindElement(By.Name("address1")).SendKeys("Sozonova st.");
+            driver.FindElement(By.Name("city")).SendKeys("San Francisco");
+
+            IWebElement country = driver.FindElement(By.Name("country_code"));
+            SelectElement selectCountry = new SelectElement(country);
+            IList<IWebElement> options = selectCountry.Options;
+
+            foreach (IWebElement opt in options)
+            {
+                if (opt.GetAttribute("textContent") == US)
+                    US = opt.GetAttribute("index");
+            }           
+            js.ExecuteScript("arguments[0].selectedIndex="+US+"; arguments[0].dispatchEvent(new Event('change'))", country);      
+            driver.FindElement(By.Name("postcode")).SendKeys("55555");
+
+            IWebElement zone = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("select[name=zone_code]")));
+            SelectElement selectZone = new SelectElement(zone);
+            selectZone.SelectByValue("CA");
+            string email = RandomString(8) + "@mail.ru";
+            driver.FindElement(By.Name("email")).SendKeys(email);
+            driver.FindElement(By.Name("phone")).SendKeys("+79509572121");
+            driver.FindElement(By.Name("password")).SendKeys("QWERTY");
+            driver.FindElement(By.Name("confirmed_password")).SendKeys("QWERTY");
+            driver.FindElement(By.Name("create_account")).Click();// конец регистрации аккаунта
+
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//a[contains(.,'Logout')]"))).Click();// logout
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Name("email"))).SendKeys(email);
+            driver.FindElement(By.Name("password")).SendKeys("QWERTY");
+            driver.FindElement(By.CssSelector(".button-set>button")).Click();// login
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(.,'You are now logged in as')]")));// login success
+            CloseDriver(driver);
+        }
+        public string RandomString(int length)
+        {
+            Random random = new Random();
+            const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
         public bool FontSize(string regular, string campaign)
         {
@@ -299,7 +351,6 @@ namespace CSharp_test_expample
         {
             return element.FindElements(locator).Count == 1;
         }
-
         public bool AreElementPresent(By locator)
         {
             return driver.FindElements(locator).Count > 0;
