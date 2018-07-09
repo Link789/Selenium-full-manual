@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using System.IO;
 
 namespace CSharp_test_expample
 {
@@ -265,6 +266,60 @@ namespace CSharp_test_expample
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(.,'You are now logged in as')]")));// login success
             CloseDriver(driver);
         }
+        [TestMethod]
+        public void TestMethod7()
+        {
+            driver = new FirefoxDriver();
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                         
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin");
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='box-apps-menu']//span[contains(.,'Catalog')]/.."))).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//a[contains(.,'New Product')]"))).Click();
+            //---General          
+            driver.FindElement(By.Name("status")).Click();
+            driver.FindElement(By.Name("name[en]")).SendKeys("New Product 1");
+            driver.FindElement(By.Name("code")).SendKeys("Code Product 1");
+            driver.FindElement(By.XPath("//input[@data-name='Rubber Ducks']")).Click();
+            driver.FindElement(By.XPath("//input[@value='1-3']")).Click(); 
+            driver.FindElement(By.Name("quantity")).SendKeys("15");
+            IWebElement status=driver.FindElement(By.Name("sold_out_status_id"));
+            SelectElement selectSoldOutStatus = new SelectElement(status);
+            selectSoldOutStatus.SelectByValue("2");
+            string fullPath = Path.GetFullPath(@"newProduct1.png");
+            driver.FindElement(By.CssSelector("input[type=file]")).SendKeys(fullPath);
+            driver.FindElement(By.Name("date_valid_from")).SendKeys("2018-07-08");
+            driver.FindElement(By.Name("date_valid_to")).SendKeys("2018-09-08");
+            driver.FindElement(By.LinkText("Information")).Click();
+            //---Information
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#tab-information")));
+            IWebElement manufacturer = driver.FindElement(By.Name("manufacturer_id"));
+            SelectElement selectManufacturer = new SelectElement(manufacturer);
+            selectManufacturer.SelectByValue("1");
+            driver.FindElement(By.Name("keywords")).SendKeys("Keyword Product 1");
+            driver.FindElement(By.Name("short_description[en]")).SendKeys("Short Description Product 1");
+            IJavaScriptExecutor js = driver as IJavaScriptExecutor;
+            js.ExecuteScript("arguments[0].innerHTML = 'Full Description Product 1 - Product 1 Product 1 Product 1';arguments[0].dispatchEvent(new Event('change'))", driver.FindElement(By.CssSelector("div.trumbowyg-editor")));
+            js.ExecuteScript("arguments[0].value = 'Full Description Product 1 - Product 1 Product 1 Product 1'", driver.FindElement(By.Name("description[en]")));
+            driver.FindElement(By.Name("head_title[en]")).SendKeys("Head title Product 1");
+            driver.FindElement(By.Name("meta_description[en]")).SendKeys("Meta description Product 1");
+            driver.FindElement(By.LinkText("Prices")).Click();
+            //---Prices  
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#tab-prices")));
+            driver.FindElement(By.Name("purchase_price")).SendKeys("22");
+            IWebElement purchasePrice = driver.FindElement(By.Name("purchase_price_currency_code"));
+            SelectElement selectPurchase_price_currency_code = new SelectElement(purchasePrice);
+            selectPurchase_price_currency_code.SelectByValue("USD");
+            driver.FindElement(By.Name("prices[USD]")).SendKeys("22");
+            driver.FindElement(By.Name("prices[EUR]")).SendKeys("18.76");
+            driver.FindElement(By.Name("save")).Click();
+            //---Assert
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin");
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='box-apps-menu']//span[contains(.,'Catalog')]/.."))).Click();
+            Assert.IsTrue(AreElementPresent(By.LinkText("New Product 1")));
+        }
         public string RandomString(int length)
         {
             Random random = new Random();
@@ -355,6 +410,7 @@ namespace CSharp_test_expample
         {
             return driver.FindElements(locator).Count > 0;
         }
+
         public void CloseDriver(IWebDriver nameDriver)
         {
             nameDriver.Quit();
