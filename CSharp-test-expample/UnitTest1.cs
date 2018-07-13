@@ -319,6 +319,60 @@ namespace CSharp_test_expample
             driver.Navigate().GoToUrl("http://localhost/litecart/admin");
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='box-apps-menu']//span[contains(.,'Catalog')]/.."))).Click();
             Assert.IsTrue(AreElementPresent(By.LinkText("New Product 1")));
+            CloseDriver(driver);
+        }
+        [TestMethod]
+        public void TestTask13()
+        {
+            int i = 0;
+            driver = new FirefoxDriver();
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            for (int j = 0; j < 3; j++)
+            {
+                driver.Navigate().GoToUrl("http://localhost/litecart/");
+                driver.FindElement(By.CssSelector(".box a.link")).Click();
+                try
+                {
+                    IWebElement options = driver.FindElement(By.Name("options[Size]"));
+                    SelectElement selectSoldOutStatus = new SelectElement(options);
+                    selectSoldOutStatus.SelectByValue("Small");
+                }
+                catch { }
+                IWebElement count = driver.FindElement(By.CssSelector(".content .quantity"));
+                i = Convert.ToInt32(count.GetAttribute("textContent"));
+                driver.FindElement(By.Name("add_cart_product")).Click();
+                i++;
+                wait.Until(ExpectedConditions.TextToBePresentInElement(count, i.ToString()));
+            }          
+            driver.FindElement(By.LinkText("Checkout »")).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#order_confirmation-wrapper td.item")));
+            ReadOnlyCollection<IWebElement> rows = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));         
+            for (i = rows.Count; i>0; i--)
+            {                     
+                if (AssertCssValue(".viewport>.items", "margin-left", "0px") == true)
+                    driver.FindElement(By.CssSelector(".items [value=Remove]")).Click();
+                ReadOnlyCollection<IWebElement> deleteRow = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));
+                wait.Until(ExpectedConditions.StalenessOf(deleteRow[deleteRow.Count-1]));              
+            };
+            Thread.Sleep(1000);
+            CloseDriver(driver);
+        }
+        public bool AssertCssValue(string locator, string cssProperty, string targetValue)
+        {
+            bool x;
+            for (;;)
+            {                
+                    if (driver.FindElement(By.CssSelector(locator)).GetCssValue(cssProperty) == targetValue)
+                    {
+                        x = true;
+                        break;
+                    }
+                    else
+                        x = false;                    
+                    Thread.Sleep(500);
+            }
+            return x;          
         }
         public string RandomString(int length)
         {
