@@ -349,14 +349,55 @@ namespace CSharp_test_expample
             wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#order_confirmation-wrapper td.item")));
             ReadOnlyCollection<IWebElement> rows = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));         
             for (i = rows.Count; i>0; i--)
-            {                     
+            {
                 if (AssertCssValue(".viewport>.items", "margin-left", "0px") == true)
+                {
                     driver.FindElement(By.CssSelector(".items [value=Remove]")).Click();
-                ReadOnlyCollection<IWebElement> deleteRow = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));
-                wait.Until(ExpectedConditions.StalenessOf(deleteRow[deleteRow.Count-1]));              
+                    ReadOnlyCollection<IWebElement> deleteRow = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));
+                    wait.Until(ExpectedConditions.StalenessOf(deleteRow[deleteRow.Count - 1]));
+                }            
             };
             Thread.Sleep(1000);
             CloseDriver(driver);
+        }
+        [TestMethod]
+        public void TestTask14()
+        {
+            driver = new FirefoxDriver();
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin");
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            Thread.Sleep(2000);
+
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin/?app=countries&doc=countries");
+            wait.Until(ExpectedConditions.ElementIsVisible(By.LinkText("Add New Country"))).Click();
+
+            string currentHandle = driver.CurrentWindowHandle;
+            int i = 0; string newTab = "";
+            ReadOnlyCollection<IWebElement> countLinks = driver.FindElements(By.CssSelector("form a[target=_blank]"));
+            ReadOnlyCollection<IWebElement> linkBlank;
+            foreach (IWebElement link in countLinks)
+            {
+                linkBlank = driver.FindElements(By.CssSelector("form a[target=_blank]"));
+                linkBlank[i].Click();
+                Thread.Sleep(1000);
+                IReadOnlyCollection<string> listHandles = driver.WindowHandles;               
+                foreach (string element in listHandles)
+                {
+                    if (element != currentHandle)
+                        newTab = element;
+                }               
+                driver.SwitchTo().Window(newTab);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("li")));
+                driver.Close();
+                driver.SwitchTo().Window(currentHandle);
+                i++;
+            }
+            CloseDriver(driver);
+
         }
         public bool AssertCssValue(string locator, string cssProperty, string targetValue)
         {
@@ -464,7 +505,6 @@ namespace CSharp_test_expample
         {
             return driver.FindElements(locator).Count > 0;
         }
-
         public void CloseDriver(IWebDriver nameDriver)
         {
             nameDriver.Quit();
