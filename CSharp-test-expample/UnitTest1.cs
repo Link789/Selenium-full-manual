@@ -399,6 +399,65 @@ namespace CSharp_test_expample
             CloseDriver(driver);
 
         }
+        [TestMethod]
+        public void TestTask17()
+        {
+            ChromeOptions options = new ChromeOptions();
+            options.SetLoggingPreference(LogType.Browser, LogLevel.All);
+            driver = new ChromeDriver(options);
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin");
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            driver.Navigate().GoToUrl("http://localhost/litecart/admin/?app=catalog&doc=catalog&category_id=1");
+            ReadOnlyCollection <IWebElement> links = driver.FindElements(By.CssSelector(".dataTable a"));
+            List<string> hrefs = new List<string>();
+            foreach (IWebElement link in links)
+            {
+                hrefs.Add(link.GetAttribute("href"));
+            }
+            foreach (string href in hrefs)
+            {
+                    driver.Navigate().GoToUrl(href);
+                    foreach (LogEntry l in driver.Manage().Logs.GetLog(LogType.Browser))
+                    {
+                        Console.WriteLine(l);
+                    }       
+            }
+            CloseDriver(driver);
+        }
+        //[TestMethod]
+        //public void TestTask18()
+        //{
+        //    driver = new FirefoxDriver();
+        //    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+        //}
+        public void PrintLogs(string logType, IWebDriver driver)
+        {
+            try
+            {
+                var browserLogs = driver.Manage().Logs.GetLog(logType);
+                if (browserLogs.Count > 0)
+                {
+                    foreach (var log in browserLogs)
+                    {
+                        Console.WriteLine(log);
+                    }
+                }
+            }
+            catch
+            {
+                //There are no log types present
+            }
+        }
+        public void PrintAllLogs(IWebDriver driver)
+        {
+            PrintLogs(LogType.Server,driver);
+            PrintLogs(LogType.Browser, driver);
+            PrintLogs(LogType.Client, driver);
+            PrintLogs(LogType.Driver, driver);
+            PrintLogs(LogType.Profiler, driver);
+        }
         public bool AssertCssValue(string locator, string cssProperty, string targetValue)
         {
             bool x;
