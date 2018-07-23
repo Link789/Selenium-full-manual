@@ -344,18 +344,18 @@ namespace CSharp_test_expample
                 driver.FindElement(By.Name("add_cart_product")).Click();
                 i++;
                 wait.Until(ExpectedConditions.TextToBePresentInElement(count, i.ToString()));
-            }          
+            }
             driver.FindElement(By.LinkText("Checkout »")).Click();
             wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#order_confirmation-wrapper td.item")));
-            ReadOnlyCollection<IWebElement> rows = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));         
-            for (i = rows.Count; i>0; i--)
+            ReadOnlyCollection<IWebElement> rows = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));
+            for (i = rows.Count; i > 0; i--)
             {
                 if (AssertCssValue(".viewport>.items", "margin-left", "0px") == true)
                 {
                     driver.FindElement(By.CssSelector(".items [value=Remove]")).Click();
                     ReadOnlyCollection<IWebElement> deleteRow = driver.FindElements(By.CssSelector("#order_confirmation-wrapper td.item"));
                     wait.Until(ExpectedConditions.StalenessOf(deleteRow[deleteRow.Count - 1]));
-                }            
+                }
             };
             Thread.Sleep(1000);
             CloseDriver(driver);
@@ -426,12 +426,14 @@ namespace CSharp_test_expample
             }
             CloseDriver(driver);
         }
-        //[TestMethod]
-        //public void TestTask18()
-        //{
-        //    driver = new FirefoxDriver();
-        //    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-        //}
+        [TestMethod]
+        public void TestTask19()
+        {
+            Application app = new Application();                       
+            app.AddProductsInCart();
+            app.DeleteProductsInCart();
+            app.Quit();
+        }
         public void PrintLogs(string logType, IWebDriver driver)
         {
             try
